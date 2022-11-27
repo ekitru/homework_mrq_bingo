@@ -25,7 +25,6 @@ public class BritishBingoCardStripGenerator {
     public Strip generate() {
         List<Queue<Integer>> numbersPool = generator.getNumbersPool();
         List<int[][]> cards = createNewStrip(numbersPool);
-        printCards(cards);
         return new Strip(cards);
     }
 
@@ -33,6 +32,11 @@ public class BritishBingoCardStripGenerator {
         List<int[][]> cards = createEmptyCards();
         fillCardsEachColumnByOneNumber(cards, numbersPool);
         fillNumbersRandomly(cards, numbersPool);
+
+        if (!numbersPool.isEmpty()) {
+            System.out.println("oops. something does not fit");
+            //TODO: swap numbers!
+        }
 
         return cards;
     }
@@ -50,21 +54,68 @@ public class BritishBingoCardStripGenerator {
     }
 
     private static void fillCardEachColumnByOneRandomNumber(int[][] card, List<Queue<Integer>> numbersPool) {
-        for (int col = 0; col < 9; col++) {
-            card[getRandomRow()][col] = numbersPool.get(col).poll();
+        for (int column = 0; column < 9; column++) {
+            while (true) {
+                final int randomRow = getRandomRow();
+                if (countNumbersInRow(card, randomRow) < 5) {
+                    card[randomRow][column] = numbersPool.get(column).poll();
+                    break;
+                }
+            }
         }
     }
 
     private static void fillNumbersRandomly(List<int[][]> cards, List<Queue<Integer>> numbersPool) {
-        for (int column = numbersPool.size() - 1; column > 0; column--) {
-            do {
-                int[][] matrix = cards.get(getRandomCard());
-                if (countNumbersInCard(matrix) < 15 && countNumbersInColumn(matrix, column) < 3) {
-                    putNumberInColumn(matrix, column, numbersPool.get(column).poll());
-                }
-            } while (!numbersPool.get(column).isEmpty());
+        for (int i = 0; i < 100; i++) {
+            for (int column = 0; column < COLUMN_NUMBER; column++) {
+                int[][] matrix = getCardWithLowestNumberOfNumbers(cards);
+                int counter = 0;
+                do {
+                    int row = getRandomRow();
+                    if (isRowAndColumnFullFillRules(column, matrix, row)) {
+                        if (matrix[row][column] == 0) {
+                            Integer newValue = numbersPool.get(column).poll();
+                            if (newValue != null) {
+                                matrix[row][column] = newValue;
+                            }
+                            break;
+                        }
+
+                    }
+                } while (counter++ < 10);
+            }
         }
     }
+
+    private static boolean isRowAndColumnFullFillRules(int column, int[][] matrix, int row) {
+        return countNumbersInColumn(matrix, column) < 3
+                && countNumbersInRow(matrix, row) < 5
+                && countNumbersInCard(matrix) < 15;
+    }
+
+    private static int[][] getCardWithLowestNumberOfNumbers(List<int[][]> cards) {
+        int min = Integer.MAX_VALUE;
+        int index = 0;
+        for (int i = 0; i < cards.size(); i++) {
+            if (countNumbersInCard(cards.get(i)) < min) {
+                min = countNumbersInCard(cards.get(i));
+                index = i;
+            }
+        }
+
+        return cards.get(index);
+    }
+
+//    private static void fillNumbersRandomly(List<int[][]> cards, List<Queue<Integer>> numbersPool) {
+//        for (int column = numbersPool.size() - 1; column > 0; column--) {
+//            do {
+//                int[][] matrix = cards.get(getRandomCard());
+//                if (countNumbersInCard(matrix) < 15 && countNumbersInColumn(matrix, column) < 3) {
+//                    putNumberInColumn(matrix, column, numbersPool.get(column).poll());
+//                }
+//            } while (!numbersPool.get(column).isEmpty());
+//        }
+//    }
 
     private static void putNumberInColumn(int[][] matrix, int column, Integer number) {
         for (int i = 0; i < ROW_NUMBER; i++) {
@@ -74,7 +125,6 @@ public class BritishBingoCardStripGenerator {
             }
         }
     }
-
 
     private static int getRandomCard() {
         return rand(6);
@@ -97,7 +147,17 @@ public class BritishBingoCardStripGenerator {
         return counter;
     }
 
-    private static int countNumbersInColumn(int[][] matrix, int column) {
+    private static int countNumbersInRow(int[][] matrix, final int row) {
+        int counter = 0;
+        for (int column = 0; column < COLUMN_NUMBER; column++) {
+            if (matrix[row][column] > 0) {
+                counter++;
+            }
+        }
+        return counter;
+    }
+
+    private static int countNumbersInColumn(int[][] matrix, final int column) {
         int counter = 0;
         for (int row = 0; row < ROW_NUMBER; row++) {
             if (matrix[row][column] > 0) {

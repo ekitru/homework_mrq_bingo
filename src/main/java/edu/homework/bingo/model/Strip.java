@@ -14,7 +14,6 @@ public class Strip {
     public Strip(List<int[][]> cards) {
         this.stripNumber = series.getAndIncrement();
 
-        assert cards.size() != 6;
         this.cards = cards.stream()
                 .map(x -> new Card(stripNumber, x))
                 .collect(Collectors.toList());
@@ -34,5 +33,25 @@ public class Strip {
                 "stripNumber=" + stripNumber +
                 ", cards=" + cards +
                 '}';
+    }
+
+    public void print() {
+        System.out.println("Bingo strip nr. " + this.getStripNumber());
+        for (int i = 0; i < this.getCards().size(); i++) {
+            System.out.printf("\nCARD %d:%n", (i + 1));
+            printCard(this.getCards().get(i));
+        }
+    }
+
+    private static void printCard(Card card) {
+        int[][] numbers = card.getNumbers();
+        System.out.println("----------------------------------------------------------------");
+        for (int[] row : numbers) {
+            System.out.format("|");
+            for (int cell : row) {
+                System.out.printf("%4s  |", cell != 0 ? cell : "");
+            }
+            System.out.println("\n----------------------------------------------------------------");
+        }
     }
 }
