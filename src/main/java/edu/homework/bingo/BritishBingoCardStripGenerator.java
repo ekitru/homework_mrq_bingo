@@ -117,19 +117,6 @@ public class BritishBingoCardStripGenerator {
 //        }
 //    }
 
-    private static void putNumberInColumn(int[][] matrix, int column, Integer number) {
-        for (int i = 0; i < ROW_NUMBER; i++) {
-            if (matrix[i][column] == 0) {
-                matrix[i][column] = number;
-                break;
-            }
-        }
-    }
-
-    private static int getRandomCard() {
-        return rand(6);
-    }
-
     private static int getRandomRow() {
         return rand(3);
     }
@@ -175,24 +162,5 @@ public class BritishBingoCardStripGenerator {
      */
     private static int rand(int bound) {
         return new Random().nextInt(bound);
-    }
-
-    private static void printCards(List<int[][]> cards) {
-        var result = new StringBuilder();
-        for (int i = 0; i < cards.size(); i++) {
-            int[][] cardMatrix = cards.get(i);
-            result.append("\nCARD " + (i + 1) + "\n");
-            result.append("-----------------------------------------\n");
-            for (int[] row : cardMatrix) {
-                result.append("|");
-                for (int cell : row) {
-                    result.append("\t" + cell);
-                }
-                result.append("\t|\n");
-                result.append("-----------------------------------------\n");
-            }
-        }
-
-        System.out.println(result);
     }
 }
