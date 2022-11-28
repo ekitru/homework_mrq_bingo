@@ -53,7 +53,6 @@ class BritishBingoSeriesGeneratorTest {
         Assertions.assertThrows(UnsupportedOperationException.class, () -> BritishBingoNumberSeriesGenerator.generateSeries().remove(5));
     }
 
-
     /**
      * Non-correct benchmark performance measure
      */

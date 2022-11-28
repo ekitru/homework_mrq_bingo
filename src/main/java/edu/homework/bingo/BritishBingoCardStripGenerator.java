@@ -57,7 +57,7 @@ public class BritishBingoCardStripGenerator {
         for (int column = 0; column < 9; column++) {
             while (true) {
                 final int randomRow = getRandomRow();
-                if (countNumbersInRow(card, randomRow) >= 5) {
+                if (MatrixUtils.countNumbersInRow(card, randomRow) >= 5) {
                     continue;
                 }
 
@@ -90,17 +90,17 @@ public class BritishBingoCardStripGenerator {
     }
 
     private static boolean isRowAndColumnFullFillRules(int column, int[][] matrix, int row) {
-        return countNumbersInColumn(matrix, column) < 3
-                && countNumbersInRow(matrix, row) < 5
-                && countNumbersInCard(matrix) < 15;
+        return MatrixUtils.countNumbersInColumn(matrix, column) < 3
+                && MatrixUtils.countNumbersInRow(matrix, row) < 5
+                && MatrixUtils.countNumbersInCard(matrix) < 15;
     }
 
     private static int[][] getCardWithLowestNumberOfNumbers(List<int[][]> cards) {
         int min = Integer.MAX_VALUE;
         int index = 0;
         for (int i = 0; i < cards.size(); i++) {
-            if (countNumbersInCard(cards.get(i)) < min) {
-                min = countNumbersInCard(cards.get(i));
+            if (MatrixUtils.countNumbersInCard(cards.get(i)) < min) {
+                min = MatrixUtils.countNumbersInCard(cards.get(i));
                 index = i;
             }
         }
@@ -116,7 +116,7 @@ public class BritishBingoCardStripGenerator {
             }
 
             for (int[][] card : cards) {
-                if (countNumbersInCard(card) == 15) {
+                if (MatrixUtils.countNumbersInCard(card) == 15) {
                     continue; // skip filled cards
                 }
 
@@ -147,39 +147,6 @@ public class BritishBingoCardStripGenerator {
 
     private static int getRandomRow() {
         return rand(3);
-    }
-
-    private static int countNumbersInCard(int[][] matrix) {
-        int counter = 0;
-        for (int[] row : matrix) {
-            for (int number : row) {
-                if (number != 0) {
-                    counter++;
-                }
-            }
-        }
-
-        return counter;
-    }
-
-    private static int countNumbersInRow(int[][] matrix, final int row) {
-        int counter = 0;
-        for (int column = 0; column < COLUMN_NUMBER; column++) {
-            if (matrix[row][column] > 0) {
-                counter++;
-            }
-        }
-        return counter;
-    }
-
-    private static int countNumbersInColumn(int[][] matrix, final int column) {
-        int counter = 0;
-        for (int row = 0; row < ROW_NUMBER; row++) {
-            if (matrix[row][column] > 0) {
-                counter++;
-            }
-        }
-        return counter;
     }
 
     /**
