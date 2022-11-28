@@ -50,7 +50,7 @@ class BritishBingoCardStripGeneratorTest {
 
     @Test
     void checkCardGenerationStability() {
-        IntStream.range(0, 1_000).forEach(x -> {
+        IntStream.range(0, 100_000).forEach(x -> {
             stripeSizeShouldHave90numbersFrom0to90();
         });
     }
@@ -74,8 +74,11 @@ class BritishBingoCardStripGeneratorTest {
             counter += stats.getCount();
         }
 
-        strip.print();
-        System.out.format("Min:\t%s, Max:\t%s, Count:\t%s\n", min, max, counter);
+//        strip.print();
+        if (counter < 90) {
+            System.out.format("Min:\t%s, Max:\t%s, Count:\t%s\n", min, max, counter);
+            strip.print();
+        }
 
         assertEquals(1, min, "Minimal number value is 1");
         assertEquals(90, max, "Maximum number value is 90");
@@ -87,8 +90,7 @@ class BritishBingoCardStripGeneratorTest {
      */
     @Test
     void testPerformanceInSingleThread() {
-        int numberOfOperations = 10_000;
-//        int numberOfOperations = 1000;
+        int numberOfOperations = 100_000;
 
         var generator = new BritishBingoCardStripGenerator();
 

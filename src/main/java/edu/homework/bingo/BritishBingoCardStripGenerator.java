@@ -22,13 +22,19 @@ public class BritishBingoCardStripGenerator {
         this.generator = generator;
     }
 
+    public Strip generate() {
+        List<Queue<Integer>> numbersPool = generator.getNumbersPool();
+        List<int[][]> cards = createNewStrip(numbersPool);
+        return new Strip(cards);
+    }
+
     static List<int[][]> createNewStrip(List<Queue<Integer>> numbersPool) {
         List<int[][]> cards = createEmptyCards();
-        fillCardsEachColumnByOneNumber(cards, numbersPool);
         fillNumbersRandomly(cards, numbersPool);
         fillAndSwap(cards, numbersPool);
+        fillAndSwap(cards, numbersPool);
 
-//        sortColumns(cards);
+        sortColumns(cards);
         return cards;
     }
 
@@ -38,50 +44,27 @@ public class BritishBingoCardStripGenerator {
                 .collect(Collectors.toList());
     }
 
-    private static void fillCardsEachColumnByOneNumber(List<int[][]> cards, List<Queue<Integer>> numbersPool) {
-        for (int[][] matrix : cards) {
-            fillCardEachColumnByOneRandomNumber(matrix, numbersPool);
-        }
-    }
-
-    private static void fillCardEachColumnByOneRandomNumber(int[][] card, List<Queue<Integer>> numbersPool) {
-        for (int column = 0; column < 9; column++) {
-            while (true) {
-                final int randomRow = getRandomRow();
-                if (MatrixUtils.countNumbersInRow(card, randomRow) >= 5) {
-                    continue;
-                }
-
-                card[randomRow][column] = numbersPool.get(column).poll();
-                break;
-            }
-        }
-    }
-
     private static void fillNumbersRandomly(List<int[][]> cards, List<Queue<Integer>> numbersPool) {
-        for (int i = 0; i < 50; i++) {
-            for (int column = 0; column < COLUMN_NUMBER; column++) {
+        for (int i = 0; i < 4; i++) {
+            for (int column = COLUMN_NUMBER - 1; column > 0; column--) {
                 int[][] matrix = getCardWithLowestNumberOfNumbers(cards);
+
                 int counter = 0;
                 do {
-                    int row = getRandomRow();
-                    if (isRowAndColumnFullFillRules(column, matrix, row)) {
-                        if (matrix[row][column] == 0) {
-                            Integer newValue = numbersPool.get(column).poll();
-                            if (newValue != null) {
-                                matrix[row][column] = newValue;
-                            }
+                    int randRow = new Random().nextInt(3);
+                    if (isRowAndColumnFullFillRules(matrix, randRow, column)) {
+                        if (matrix[randRow][column] == 0) {
+                            matrix[randRow][column] = numbersPool.get(column).poll();
                             break;
                         }
-
                     }
-                } while (counter++ < 10);
+                } while (counter++ < 5);
             }
         }
     }
 
-    private static boolean isRowAndColumnFullFillRules(int column, int[][] matrix, int row) {
-        return MatrixUtils.countNumbersInColumn(matrix, column) < 3
+    private static boolean isRowAndColumnFullFillRules(int[][] matrix, int row, int column) {
+        return MatrixUtils.countNumbersInColumn(matrix, column) < 2
                 && MatrixUtils.countNumbersInRow(matrix, row) < 5
                 && MatrixUtils.countNumbersInCard(matrix) < 15;
     }
@@ -137,7 +120,7 @@ public class BritishBingoCardStripGenerator {
             }
         }
 
-        if (swapRow == -1 && invalidRow == -1) {
+        if (swapRow == -1 || invalidRow == -1) {
             return;
         }
 
@@ -163,26 +146,17 @@ public class BritishBingoCardStripGenerator {
     }
 
     private static void sortColumns(int[][] card) {
-        //TODO: need like "bubble sort" simple implementation
+        for (int col = 0; col < card[0].length; col++) {
+            for (int row = 0; row < card.length - 1; row++) {
+                int first = card[row][col];
+                int second = card[row + 1][col];
+
+                if (first != 0 && second != 0) {
+                    card[row][col] = Math.min(first, second);
+                    card[row + 1][col] = Math.max(first, second);
+                }
+            }
+        }
     }
 
-    private static int getRandomRow() {
-        return rand(3);
-    }
-
-    /**
-     * @param bound the upper bound (exclusive).  Must be positive.
-     * @return the next pseudorandom, uniformly distributed {@code int}
-     * value between zero (inclusive) and {@code bound} (exclusive)
-     * from this random number generator's sequence
-     */
-    private static int rand(int bound) {
-        return new Random().nextInt(bound);
-    }
-
-    public Strip generate() {
-        List<Queue<Integer>> numbersPool = generator.getNumbersPool();
-        List<int[][]> cards = createNewStrip(numbersPool);
-        return new Strip(cards);
-    }
 }
