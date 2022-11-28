@@ -4,6 +4,8 @@ import org.assertj.core.data.Index;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.time.Duration;
+import java.time.Instant;
 import java.util.List;
 import java.util.Queue;
 
@@ -32,19 +34,12 @@ class BritishBingoSeriesGeneratorTest {
                 .endsWith(5);
     }
 
-    @Test
-    void generatedNumbersSeriesAreImmutable() {
-        Assertions.assertThrows(UnsupportedOperationException.class, () -> {
-            BritishBingoNumberSeriesGenerator.generateNumberSeries(1, 6).add(123);
-            BritishBingoNumberSeriesGenerator.generateNumberSeries(1, 6).remove(123);
-        });
-    }
 
     @Test
     void generatedSeriesShouldHave9setsWithSizes_9_10_11() {
         assertThat(BritishBingoNumberSeriesGenerator.generateSeries())
                 .hasSize(9)
-                .map(x -> x.size())
+                .map(x -> x.length)
                 .contains(9, Index.atIndex(0))
                 .contains(10, Index.atIndex(2))
                 .contains(10, Index.atIndex(7))
@@ -55,8 +50,33 @@ class BritishBingoSeriesGeneratorTest {
 
     @Test
     void generatedSeriesAreImmutable() {
-        Assertions.assertThrows(UnsupportedOperationException.class, () -> {
-            BritishBingoNumberSeriesGenerator.generateSeries().remove(5);
-        });
+        Assertions.assertThrows(UnsupportedOperationException.class, () -> BritishBingoNumberSeriesGenerator.generateSeries().remove(5));
+    }
+
+
+    /**
+     * Non-correct benchmark performance measure
+     */
+    @Test
+    void testPerformanceInSingleThread() {
+        int numberOfOperations = 1_000_000;
+
+        var generator = new BritishBingoNumberSeriesGenerator();
+
+
+        Instant start = Instant.now();
+        for (int i = 0; i < numberOfOperations; i++) {
+            try {
+                generator.getNumbersPool();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        Instant end = Instant.now();
+        long mills = Duration.between(start, end).toMillis();
+
+        System.out.println("===================");
+        System.out.println("Performance: " + mills + " ms. (" + numberOfOperations / mills + " operation per ms)");
+        System.out.println("===================");
     }
 }

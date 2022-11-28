@@ -1,7 +1,6 @@
 package edu.homework.bingo;
 
 import java.util.*;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 /**
@@ -12,32 +11,26 @@ import java.util.stream.IntStream;
  */
 public class BritishBingoNumberSeriesGenerator {
 
-    private final List<List<Integer>> numberSeries;
+    private final List<int[]> numberSeries;
 
     public BritishBingoNumberSeriesGenerator() {
         this.numberSeries = generateSeries();
     }
 
     public List<Queue<Integer>> getNumbersPool() {
-        return numberSeries.stream()
-                .map(x->shuffleNumbers(x))
-                .collect(Collectors.toList());
+        List<Queue<Integer>> list = new ArrayList<>(10);
+        for (int[] numbers : numberSeries) {
+            Queue<Integer> queue = new PriorityQueue<>();
+            for (int number : Arrays.copyOf(numbers, numbers.length)) {
+                queue.add(number);
+            }
+            list.add(queue);
+        }
 
-//        List<Queue<Integer>> newCopy = new ArrayList<>();
-//        for (List<Integer> series : numberSeries) {
-//            newCopy.add(shuffleNumbers(series));
-//        }
-//
-//        return newCopy;
+        return list;
     }
 
-    Queue<Integer> shuffleNumbers(Collection<Integer> series) {
-        LinkedList<Integer> numbers = new LinkedList<>(series);
-        Collections.shuffle(numbers);
-        return numbers;
-    }
-
-    static List<List<Integer>> generateSeries() {
+    static List<int[]> generateSeries() {
         return List.of(
                 generateNumberSeries(1, 9),
                 generateNumberSeries(10, 19),
@@ -51,9 +44,10 @@ public class BritishBingoNumberSeriesGenerator {
         );
     }
 
-    static List<Integer> generateNumberSeries(int begin, int end) {
+    static int[] generateNumberSeries(int begin, int end) {
         return IntStream.rangeClosed(begin, end)
                 .boxed()
-                .collect(Collectors.toUnmodifiableList());
+                .mapToInt(i -> i)
+                .toArray();
     }
 }

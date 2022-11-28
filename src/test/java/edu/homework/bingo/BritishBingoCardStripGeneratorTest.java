@@ -1,5 +1,6 @@
 package edu.homework.bingo;
 
+import edu.homework.bingo.model.Card;
 import edu.homework.bingo.model.Strip;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -37,8 +38,6 @@ class BritishBingoCardStripGeneratorTest {
         System.out.println("===================");
         System.out.println("Performance: " + mills + " ms. (" + numberOfOperations / mills + " operation per ms)");
         System.out.println("===================");
-
-        Assertions.assertTrue(numberOfOperations / mills > 0);
     }
 
     @Test
@@ -47,9 +46,9 @@ class BritishBingoCardStripGeneratorTest {
         Strip strip = generator.generate();
 
         List<IntSummaryStatistics> collect = strip.getCards().stream()
-                .map(card -> card.getNumbers())
-                .map(x -> findStats(x))
-                .collect(Collectors.toList());
+                .map(Card::getNumbers)
+                .map(this::findStats)
+                .toList();
 
         int min = Integer.MAX_VALUE;
         int max = Integer.MIN_VALUE;
@@ -72,12 +71,10 @@ class BritishBingoCardStripGeneratorTest {
     }
 
     IntSummaryStatistics findStats(int[][] array) {
-        IntSummaryStatistics stats = Arrays.stream(array)
+        return Arrays.stream(array)
                 .flatMapToInt(Arrays::stream)
                 .boxed()
                 .filter(x -> x > 0)
                 .collect(Collectors.summarizingInt(value -> value));
-
-        return stats;
     }
 }
