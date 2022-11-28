@@ -125,7 +125,7 @@ public class BritishBingoCardStripGenerator {
                 }
 
                 for (int row = 0; row < ROW_NUMBER; row++) {
-                    if (card[row][colNum] != 0 && !numbers.isEmpty()) {
+                    if (card[row][colNum] == 0 && !numbers.isEmpty()) {
                         card[row][colNum] = numbers.poll();
                         break;
                     }
@@ -142,7 +142,7 @@ public class BritishBingoCardStripGenerator {
     }
 
     private static void sortColumns(int[][] card) {
-        //TODO:
+        //TODO: need like "bubble sort" simple implementation
     }
 
     private static int getRandomRow() {
