@@ -26,12 +26,9 @@ public class BritishBingoCardStripGenerator {
         List<int[][]> cards = createEmptyCards();
         fillCardsEachColumnByOneNumber(cards, numbersPool);
         fillNumbersRandomly(cards, numbersPool);
+        fillAndSwap(cards, numbersPool);
 
-        if (!numbersPool.isEmpty()) {
-            fillAndSwap(cards, numbersPool);
-        }
-
-        sortColumns(cards);
+//        sortColumns(cards);
         return cards;
     }
 
@@ -110,22 +107,52 @@ public class BritishBingoCardStripGenerator {
             }
 
             for (int[][] card : cards) {
-                if (MatrixUtils.countNumbersInCard(card) == 15) {
+                if (isColumnFull(card, colNum) || MatrixUtils.countNumbersInCard(card) == 15) {
                     continue; // skip filled cards
-                }
-
-                if (card[0][colNum] != 0 && card[1][colNum] != 0 && card[2][colNum] != 0) {
-                    continue; // skip cards which does not  suits well to fulfill
                 }
 
                 for (int row = 0; row < ROW_NUMBER; row++) {
                     if (card[row][colNum] == 0 && !numbers.isEmpty()) {
                         card[row][colNum] = numbers.poll();
+
+                        normalizeRowSize(card);
                         break;
                     }
                 }
             }
         }
+    }
+
+    private static void normalizeRowSize(int[][] card) {
+        int swapRow = -1;
+        int invalidRow = -1;
+
+        for (int rowNumber = 0; rowNumber < card.length; rowNumber++) {
+            if (MatrixUtils.countNumbersInRow(card, rowNumber) < 5) {
+                swapRow = rowNumber;
+            }
+
+            if (MatrixUtils.countNumbersInRow(card, rowNumber) > 5) {
+                invalidRow = rowNumber;
+            }
+        }
+
+        if (swapRow == -1 && invalidRow == -1) {
+            return;
+        }
+
+        for (int colNumber = 0; colNumber < card[0].length; colNumber++) {
+            if (card[invalidRow][colNumber] != 0 && card[swapRow][colNumber] == 0) {
+                int temp = card[invalidRow][colNumber];
+                card[swapRow][colNumber] = temp;
+                card[invalidRow][colNumber] = 0;
+                break;
+            }
+        }
+    }
+
+    private static boolean isColumnFull(int[][] card, int columnNumber) {
+        return card[0][columnNumber] != 0 && card[1][columnNumber] != 0 && card[2][columnNumber] != 0;
     }
 
     private static void sortColumns(List<int[][]> cards) {

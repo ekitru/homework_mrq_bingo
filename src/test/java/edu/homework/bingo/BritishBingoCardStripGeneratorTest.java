@@ -10,6 +10,7 @@ import java.util.Arrays;
 import java.util.IntSummaryStatistics;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -48,6 +49,13 @@ class BritishBingoCardStripGeneratorTest {
     }
 
     @Test
+    void checkCardGenerationStability() {
+        IntStream.range(0, 1_000).forEach(x -> {
+            stripeSizeShouldHave90numbersFrom0to90();
+        });
+    }
+
+    @Test
     void stripeSizeShouldHave90numbersFrom0to90() {
         Strip strip = new BritishBingoCardStripGenerator().generate();
         List<IntSummaryStatistics> collect = strip.getCards().stream()
@@ -79,8 +87,8 @@ class BritishBingoCardStripGeneratorTest {
      */
     @Test
     void testPerformanceInSingleThread() {
-//        int numberOfOperations = 10_000;
-        int numberOfOperations = 1000;
+        int numberOfOperations = 10_000;
+//        int numberOfOperations = 1000;
 
         var generator = new BritishBingoCardStripGenerator();
 
