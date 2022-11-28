@@ -18,8 +18,8 @@ class BritishBingoCardStripGeneratorTest {
      */
     @Test
     void testPerformanceInSingleThread() {
-        int numberOfOperations = 10_000;
-//        int numberOfOperations = 10;
+//        int numberOfOperations = 10_000;
+        int numberOfOperations = 1000;
 
         var generator = new BritishBingoCardStripGenerator();
 
@@ -37,6 +37,8 @@ class BritishBingoCardStripGeneratorTest {
         System.out.println("===================");
         System.out.println("Performance: " + mills + " ms. (" + numberOfOperations / mills + " operation per ms)");
         System.out.println("===================");
+
+        Assertions.assertTrue(numberOfOperations / mills > 0);
     }
 
     @Test
@@ -61,7 +63,7 @@ class BritishBingoCardStripGeneratorTest {
         }
 
         strip.print();
-        System.out.format("Min:\t%s, Max:\t%s", min, max);
+        System.out.format("Min:\t%s, Max:\t%s\n", min, max);
 
 
         Assertions.assertEquals(90, counter, "90 values should be present in one stripe");

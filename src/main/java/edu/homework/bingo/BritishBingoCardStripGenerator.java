@@ -34,10 +34,10 @@ public class BritishBingoCardStripGenerator {
         fillNumbersRandomly(cards, numbersPool);
 
         if (!numbersPool.isEmpty()) {
-            System.out.println("oops. something does not fit");
-            //TODO: swap numbers!
+            fillAndSwap(cards, numbersPool);
         }
 
+        sortColumns(cards);
         return cards;
     }
 
@@ -57,16 +57,18 @@ public class BritishBingoCardStripGenerator {
         for (int column = 0; column < 9; column++) {
             while (true) {
                 final int randomRow = getRandomRow();
-                if (countNumbersInRow(card, randomRow) < 5) {
-                    card[randomRow][column] = numbersPool.get(column).poll();
-                    break;
+                if (countNumbersInRow(card, randomRow) >= 5) {
+                    continue;
                 }
+
+                card[randomRow][column] = numbersPool.get(column).poll();
+                break;
             }
         }
     }
 
     private static void fillNumbersRandomly(List<int[][]> cards, List<Queue<Integer>> numbersPool) {
-        for (int i = 0; i < 100; i++) {
+        for (int i = 0; i < 50; i++) {
             for (int column = 0; column < COLUMN_NUMBER; column++) {
                 int[][] matrix = getCardWithLowestNumberOfNumbers(cards);
                 int counter = 0;
@@ -106,16 +108,42 @@ public class BritishBingoCardStripGenerator {
         return cards.get(index);
     }
 
-//    private static void fillNumbersRandomly(List<int[][]> cards, List<Queue<Integer>> numbersPool) {
-//        for (int column = numbersPool.size() - 1; column > 0; column--) {
-//            do {
-//                int[][] matrix = cards.get(getRandomCard());
-//                if (countNumbersInCard(matrix) < 15 && countNumbersInColumn(matrix, column) < 3) {
-//                    putNumberInColumn(matrix, column, numbersPool.get(column).poll());
-//                }
-//            } while (!numbersPool.get(column).isEmpty());
-//        }
-//    }
+    private static void fillAndSwap(List<int[][]> cards, List<Queue<Integer>> numbersPool) {
+        for (int colNum = 0; colNum < numbersPool.size(); colNum++) {
+            Queue<Integer> numbers = numbersPool.get(colNum);
+            if (numbers.isEmpty()) {
+                continue;
+            }
+
+            for (int[][] card : cards) {
+                if (countNumbersInCard(card) == 15) {
+                    continue; // skip filled cards
+                }
+
+                if (card[0][colNum] != 0 && card[1][colNum] != 0 && card[2][colNum] != 0) {
+                    continue; // skip cards which does not  suits well to fulfill
+                }
+
+                for (int row = 0; row < ROW_NUMBER; row++) {
+                    if (card[row][colNum] != 0 && !numbers.isEmpty()) {
+                        card[row][colNum] = numbers.poll();
+                        break;
+                    }
+                }
+            }
+        }
+    }
+
+    private static void sortColumns(List<int[][]> cards) {
+        for (int[][] card : cards) {
+            sortColumns(card);
+        }
+
+    }
+
+    private static void sortColumns(int[][] card) {
+        //TODO:
+    }
 
     private static int getRandomRow() {
         return rand(3);
