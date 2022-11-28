@@ -19,6 +19,18 @@ public class Strip {
                 .collect(Collectors.toList());
     }
 
+    private static void printCard(Card card) {
+        int[][] numbers = card.getNumbers();
+        System.out.println("----------------------------------------------------------------");
+        for (int[] row : numbers) {
+            System.out.format("|");
+            for (int cell : row) {
+                System.out.printf("%4s  |", cell != 0 ? cell : "");
+            }
+            System.out.println("\n----------------------------------------------------------------");
+        }
+    }
+
     public int getStripNumber() {
         return stripNumber;
     }
@@ -40,18 +52,6 @@ public class Strip {
         for (int i = 0; i < this.getCards().size(); i++) {
             System.out.printf("\nCARD %d:%n", (i + 1));
             printCard(this.getCards().get(i));
-        }
-    }
-
-    private static void printCard(Card card) {
-        int[][] numbers = card.getNumbers();
-        System.out.println("----------------------------------------------------------------");
-        for (int[] row : numbers) {
-            System.out.format("|");
-            for (int cell : row) {
-                System.out.printf("%4s  |", cell != 0 ? cell : "");
-            }
-            System.out.println("\n----------------------------------------------------------------");
         }
     }
 }

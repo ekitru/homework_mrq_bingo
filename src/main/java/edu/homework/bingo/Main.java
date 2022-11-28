@@ -1,6 +1,5 @@
 package edu.homework.bingo;
 
-import edu.homework.bingo.model.Card;
 import edu.homework.bingo.model.Strip;
 
 public class Main {

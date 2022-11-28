@@ -17,19 +17,6 @@ public class BritishBingoNumberSeriesGenerator {
         this.numberSeries = generateSeries();
     }
 
-    public List<Queue<Integer>> getNumbersPool() {
-        List<Queue<Integer>> list = new ArrayList<>(10);
-        for (int[] numbers : numberSeries) {
-            Queue<Integer> queue = new PriorityQueue<>();
-            for (int number : Arrays.copyOf(numbers, numbers.length)) {
-                queue.add(number);
-            }
-            list.add(queue);
-        }
-
-        return list;
-    }
-
     static List<int[]> generateSeries() {
         return List.of(
                 generateNumberSeries(1, 9),
@@ -49,5 +36,18 @@ public class BritishBingoNumberSeriesGenerator {
                 .boxed()
                 .mapToInt(i -> i)
                 .toArray();
+    }
+
+    public List<Queue<Integer>> getNumbersPool() {
+        List<Queue<Integer>> list = new ArrayList<>(10);
+        for (int[] numbers : numberSeries) {
+            Queue<Integer> queue = new PriorityQueue<>();
+            for (int number : Arrays.copyOf(numbers, numbers.length)) {
+                queue.add(number);
+            }
+            list.add(queue);
+        }
+
+        return list;
     }
 }

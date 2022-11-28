@@ -1,7 +1,6 @@
 package edu.homework.bingo;
 
 import org.assertj.core.data.Index;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.time.Duration;
@@ -10,6 +9,7 @@ import java.util.List;
 import java.util.Queue;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.*;
 
 class BritishBingoSeriesGeneratorTest {
 
@@ -18,11 +18,11 @@ class BritishBingoSeriesGeneratorTest {
         BritishBingoNumberSeriesGenerator generator = new BritishBingoNumberSeriesGenerator();
         List<Queue<Integer>> series1 = generator.getNumbersPool();
         List<Queue<Integer>> series2 = generator.getNumbersPool();
-        Assertions.assertNotEquals(series1, series2);
+        assertNotEquals(series1, series2);
 
-        Assertions.assertEquals(9, series1.get(0).size());
-        Assertions.assertDoesNotThrow(() -> series1.get(0).poll());
-        Assertions.assertEquals(8, series1.get(0).size());
+        assertEquals(9, series1.get(0).size());
+        assertDoesNotThrow(() -> series1.get(0).poll());
+        assertEquals(8, series1.get(0).size());
     }
 
     @Test
@@ -50,7 +50,7 @@ class BritishBingoSeriesGeneratorTest {
 
     @Test
     void generatedSeriesAreImmutable() {
-        Assertions.assertThrows(UnsupportedOperationException.class, () -> BritishBingoNumberSeriesGenerator.generateSeries().remove(5));
+        assertThrows(UnsupportedOperationException.class, () -> BritishBingoNumberSeriesGenerator.generateSeries().remove(5));
     }
 
     /**

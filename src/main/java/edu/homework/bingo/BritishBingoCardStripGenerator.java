@@ -22,12 +22,6 @@ public class BritishBingoCardStripGenerator {
         this.generator = generator;
     }
 
-    public Strip generate() {
-        List<Queue<Integer>> numbersPool = generator.getNumbersPool();
-        List<int[][]> cards = createNewStrip(numbersPool);
-        return new Strip(cards);
-    }
-
     static List<int[][]> createNewStrip(List<Queue<Integer>> numbersPool) {
         List<int[][]> cards = createEmptyCards();
         fillCardsEachColumnByOneNumber(cards, numbersPool);
@@ -157,5 +151,11 @@ public class BritishBingoCardStripGenerator {
      */
     private static int rand(int bound) {
         return new Random().nextInt(bound);
+    }
+
+    public Strip generate() {
+        List<Queue<Integer>> numbersPool = generator.getNumbersPool();
+        List<int[][]> cards = createNewStrip(numbersPool);
+        return new Strip(cards);
     }
 }
